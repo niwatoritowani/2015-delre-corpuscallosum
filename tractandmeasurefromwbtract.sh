@@ -1,8 +1,11 @@
 #!/bin/bash
 
+outputdir=originmoved_refbse
+
 usage() {
     echo "Usage: $0 <case_ID>"
     echo "move to /projects/schiz/shiz/3Tdata/case<case_ID>/projects/2015-delre-corpuscallosum"
+    echo "create output directory: ${outputdir}"
     echo "move origin <case_ID>-cc-div-roi.nrrd refered to <case_ID>-base.nrrd"
     echo "run tract_queier, activate_tensors.py, measureTracts.py"
     exit 0
@@ -16,7 +19,7 @@ done
 
 projectdir=/projects/schiz/3Tprojects/2015-delre-corpuscallosum
 caseid=$2
-casedir=case${caseid}/projects/2015-delre-corpuscallosum
+casedir=/projects/schiz/case${caseid}/projects/2015-delre-corpuscallosum
 dwibase=/rfanfs/pnl-zorro/projects/Cidar_johanna/Registration/output_folder${caseid}/$caseid-bse.nrrd
 # fsatlas=/rfanfs/pnl-zorro/projects/Kubicki_SCZ_R01/FE_MI_Analysis/FS2BSE_FES/$caseid.nii.gz
 # fsatlasn=/tmp/$caseid.nrrd
@@ -24,14 +27,21 @@ wbtract=/rfanfs/pnl-zorro/projects/Kubicki_SCZ_R01/FE_MI_Analysis/VTKs_FES/$case
 # intrustquery=/projects/schiz/software/LabPython/tract_querier/queries/intrust_query.qry
 projectquery=$[projectdir}/2015-delre-callosum.qry
 
-if [[ -f "${caseid}-cc-div-roi-originmoved.nrrd" ]]; then
-    echo "'${caseid}-cc-div-roi-originmoved.nrrd' exists and is out of date, delete it if you want to recompute it."
+echo "cd ${casedir}"
+cd ${casedir}
+
+if [[ -f "${outputdir}" ]]; then
+    echo "output directory '${outputdir}' exists and is out of date, delete it if you want to recompute it."
     exit 0
 fi
 
-cd ${casedir}
+echo "mkdir ${outputdir}"
+mkdir ${outputdir}
+echo "cd ${outputdir}"
+cd ${outputdir}
+
 /projects/schiz/3Tprojects/2015-delre-corpuscallosum/changeorigin.py \
-    -i ${caseid}-cc-div-roi.nrrd \
+    -i ${casedir}/${caseid}-cc-div-roi.nrrd \
     -o ${caseid}-cc-div-roi-originmoved.nrrd \
     -r ${dwibase}
 ConvertBetweenFileFormats ${caseid}-cc-div-roi-originmoved.nrrd ${caseid}-cc-div-roi-originmoved.nii.gz
