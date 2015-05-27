@@ -59,7 +59,7 @@ def main():
 
     new_origin = extract_line_in_file(image_ref, "space origin: ")   
     t('unu save -e gzip -f nrrd -i %s -o %s' % (image_in, image_out))
-    replace_line_in_file(image_out, "space origin: ", "%s\n" % (new_origin))
+    replace_line_in_file(image_out, "space origin: ", "%s" % (new_origin))
 
 if __name__ == '__main__':
     main()
