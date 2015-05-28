@@ -9,3 +9,5 @@ tractographyandmeasure.sh
 summarizevalues.sh
 
 tractandmeasurefromwbtract.sh
+(changeorigin.py)
+
