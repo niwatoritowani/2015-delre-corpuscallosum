@@ -1,7 +1,7 @@
 # workflow
-    - 
-    - 
-    - 
+- 
+- 
+- 
 
 
 # data description
@@ -19,7 +19,7 @@
     - T2                  :  orig-space/${caseid}-t2w.nrrd 
     - ac-pc realigned T1  :  align-space/${caseid}-t1w-realign.nrrd
 
-## atlasmsks are created by "redo" in /projects/schiz/3Tprojects/2014-delre-masking
+## atlasmsks
 
 - atlasmask directory : /projects/schiz/3Tprojects/2014-delre-masking
     - trainig T2             : t2s.txt
@@ -29,7 +29,7 @@
     - atlasmask copied       : masks-fromcluster/${caseid}.atlasmask.thresh50.nrrd
     - atlasmask edited       : masks-fromcluster/${caseid}.atlasmask.thresh50-edr.nrrd 
 
-## FreeSurfer pipipeline is excuted by "redo ${caseid}" in /projects/pnl/3Tdata/freesurfer-pipeline/
+## FreeSurfer pipipeline products
 
 - freeusrfer     : /projects/pnl/3Tdata/freesurfer-pipeline/${caseid}.freesurfer
 - realign xfm    : ${atlasmaskdir}/pipelines/realign-pipeline/${caseid}.xfm
@@ -105,19 +105,28 @@
     - atlasmask copied       : masks-fromcluster/${caseid}.atlasmask.thresh50.nrrd
     - atlasmask edited       : masks-fromcluster/${caseid}.atlasmask.thresh50-edr.nrrd 
 
-## FreeSurfer pipipeline is excuted by "redo ${caseid}" in /projects/pnl/3Tdata/freesurfer-pipeline/
+## FreeSurfer pipipeline
 
-- freeusrfer     : /projects/pnl/3Tdata/freesurfer-pipeline/${caseid}.freesurfer
-- realign xfm    : ${atlasmaskdir}/pipelines/realign-pipeline/${caseid}.xfm
-- realigned T2   : ${atlasmaskdir}/pipelines/realign-pipeline/${caseid}-t2w-realign.nrrd
-- realigned mask : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.mask-realign.nrrd
-- masked T1      : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.t1-realign-masked.nrrd
+- excuted by "redo ${caseid}" 
+- in /projects/pnl/3Tdata/freesurfer-pipeline
+- input
+    - ac-pc realigned T1  :  ${casedir}/strct/align-space/${caseid}-t1w-realign.nrrd
+    - T2                  :  ${casedir}/strct/orig-space/${caseid}-t2w.nrrd 
+    - atlasmask edited    :  ${atlasmaskdir}/masks-fromcluster/${caseid}.atlasmask.thresh50-edr.nrrd 
+- output
+    - freeusrfer     : /projects/pnl/3Tdata/freesurfer-pipeline/${caseid}.freesurfer
+    - realign xfm    : ${atlasmaskdir}/pipelines/realign-pipeline/${caseid}.xfm
+    - realigned T2   : ${atlasmaskdir}/pipelines/realign-pipeline/${caseid}-t2w-realign.nrrd
+    - realigned mask : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.mask-realign.nrrd
+    - masked T1      : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.t1-realign-masked.nrrd
 
 ...
 
 ## diffusion
 
 ## tractography
+
+- UKFTractography
 
 ## summarize the measured data
 
