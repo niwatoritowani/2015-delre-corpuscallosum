@@ -9,3 +9,5 @@ outputfile3.csv
 output_time1.csv
 temporarydata/
 testdir_fslabel/
+stats
+caselist*
