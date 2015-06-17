@@ -1,7 +1,21 @@
 # workflow
-- 
-- 
-- 
+
+## structural
+
+- already T2 and realigned T1 exists
+- edit masks for trainig masks in T2
+- atlasmasking in T2
+- edit mask manually in T2
+- freesurfer-pipeline
+
+## diffusion
+
+- DWI -> DTI by 3D slicer4
+- create corpus callosum ROI using DTI
+- create tracts from DWI and corpus callosum ROI
+- measure tract
+
+## statistics
 
 
 # data description
@@ -92,9 +106,13 @@
 
 # step by step 
 
-...
+## structural
 
-## atlasmsks are 
+### preprocessing
+
+- realigned T1 and T2 in NRRD format already exist
+
+### atlasmsks are 
 - created by "redo" 
 - for the cases of caselist
 - in atlasmask directory : /projects/schiz/3Tprojects/2014-delre-masking
@@ -105,7 +123,7 @@
     - atlasmask copied       : masks-fromcluster/${caseid}.atlasmask.thresh50.nrrd
     - atlasmask edited       : masks-fromcluster/${caseid}.atlasmask.thresh50-edr.nrrd 
 
-## FreeSurfer pipipeline
+### FreeSurfer pipipeline
 
 - excuted by "redo ${caseid}" 
 - in /projects/pnl/3Tdata/freesurfer-pipeline
@@ -120,25 +138,41 @@
     - realigned mask : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.mask-realign.nrrd
     - masked T1      : ${atlasmaskdir}/pipelines/realign-edrmasks-pipeline/${caseid}.t1-realign-masked.nrrd
 
-...
 
 ## diffusion
 
-## tractography
+### creating corpus callosum ROI
 
-- UKFTractography
+- DWI to DTI by 3D slicer
+- create and edit manually corpus callosum ROI
 
-## summarize the measured data
+### tractography
+
+- UKFTractography with considering free water
+    - UKFTractography --tracts ${case}-cc-ukf.vtk --maskFile /projects/schiz/3Tdata/case${case}/diff/Tensor_mask-${case}-dwi-filt-Ed_AvGradient-edited.nhdr --labels 1 --seedsFile ${case}-cc-roi.nrrd --dwiFile /projects/schiz/3Tdata/case${case}/diff/${case}-dwi-filt-Ed.nhdr --recordTensors --freeWater
+    - UKFTractography --tracts ${case}-cc-div1-ukf.vtk --maskFile /projects/schiz/3Tdata/case${case}/diff/Tensor_mask-${case}-dwi-filt-Ed_AvGradient-edited.nhdr --labels 241 --seedsFile ${case}-cc-div-roi.nrrd --dwiFile /projects/schiz/3Tdata/case${case}/diff/${case}-dwi-filt-Ed.nhdr --recordTensors --freeWater
+    - ...
+- measure tracts (with free water)
+    - measureTracts.py -i ${case}-cc-ukf.vtk ${case}-cc-div1-ukf.vtk ${case}-cc-div2-ukf.vtk ${case}-cc-div3-ukf.vtk ${case}-cc-div4-ukf.vtk ${case}-cc-div5-ukf.vtk -o ${case}-cc-ukf-values.csv
+- UKFTractography without considering free water
+    - UKFTractography --tracts without-freeWater/${case}-cc-ukf.vtk --maskFile /projects/schiz/3Tdata/case${case}/diff/Tensor_mask-${case}-dwi-filt-Ed_AvGradient-edited.nhdr --labels 1 --seedsFile ${case}-cc-roi.nrrd --dwiFile /projects/schiz/3Tdata/case${case}/diff/${case}-dwi-filt-Ed.nhdr --recordTensors
+    - UKFTractography --tracts without-freeWater/${case}-cc-div1-ukf.vtk --maskFile /projects/schiz/3Tdata/case${case}/diff/Tensor_mask-${case}-dwi-filt-Ed_AvGradient-edited.nhdr --labels 241 --seedsFile ${case}-cc-div-roi.nrrd --dwiFile /projects/schiz/3Tdata/case${case}/diff/${case}-dwi-filt-Ed.nhdr --recordTensors
+    - ...
+- measure tracts (without free water)
+    - measureTracts.py -i without-freeWater/${case}-cc-ukf.vtk without-freeWater/${case}-cc-div1-ukf.vtk without-freeWater/${case}-cc-div2-ukf.vtk without-freeWater/${case}-cc-div3-ukf.vtk without-freeWater/${case}-cc-div4-ukf.vtk without-freeWater/${case}-cc-div5-ukf.vtk -o without-freeWater/${case}-cc-ukf-values.csv 
+
+### summarize the measured data
 
 - extract from files of each cases 
     - inputfilepattern=${casedir}/projects/2015-delre-corpuscallosum/\${case}-cc-ukf-values.csv
 
+## statistics
 
-
-
-
-
-
-
+- ANCOVA? MANOVA? 
+    - group  : between-subjects factor, level 2, 
+    - gender : between-subjects factor, level 2, 
+    - group x gender interraction 
+    - time points : within-subjects factor, level 2, 
+    - intracranial content volume : nuisance variable
 
 
