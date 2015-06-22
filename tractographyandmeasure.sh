@@ -15,11 +15,17 @@ while getopts h OPTION; do
     esac
 done
 
+caseprojdir=/projects/schiz/3Tdata/case${case}/projects/2015-delre-corpuscallosum
+if [[ ! -d ${caseprojdir} ]]; then echo "${caseprojdir} does not exist"; exit 1; fi
+cd ${caseprojdir}
+if [[ -e ${case}-cc-roi.nrrd ]]; then echo "file already exists"; exit 1; fi
+if [[ -e ${case}-cc-ukf.vtk ]]; then echo "file already exists"; exit 1; fi
 
+cmd="
 
 ### create whole corpus callosum ROI
 # create binary image data where greater than intensity 0 (any label has any intensity other than 0).
-# and save by "unu save"
+# and save by \"unu save\"
 
 unu 2op gt ${case}-cc-div-roi.nrrd 0 | unu save -e gzip -f nrrd -o ${case}-cc-roi.nrrd
 
@@ -85,5 +91,9 @@ UKFTractography --tracts without-freeWater/${case}-cc-div5-ukf.vtk --maskFile /p
 
 # measure tracts
 measureTracts.py -i without-freeWater/${case}-cc-ukf.vtk without-freeWater/${case}-cc-div1-ukf.vtk without-freeWater/${case}-cc-div2-ukf.vtk without-freeWater/${case}-cc-div3-ukf.vtk without-freeWater/${case}-cc-div4-ukf.vtk without-freeWater/${case}-cc-div5-ukf.vtk -o without-freeWater/${case}-cc-ukf-values.csv
+"
 
-
+scriptname=$(basename $0)
+logfilename=${scriptname}.log
+echo "${cmd}" | tee ${logfilename}
+eval "${cmd}" 2>&1 | tee -a ${logfilename}
