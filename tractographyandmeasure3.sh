@@ -28,7 +28,7 @@ if [[ ! -d ${caseprojdir} ]]; then echo "${caseprojdir} does not exist"; exit 1;
 if [[ -e ${casedir}/diff/${caseid}-dwi-filt-Ed.nhdr ]]; then
     dwifile="${casedir}/diff/${caseid}-dwi-filt-Ed.nhdr"
     echo "set dwifile ${dwifile}"
-if [[ -e ${casedir}/diff/${caseid}-dwi-Ed.nhdr ]]; then
+elif [[ -e ${casedir}/diff/${caseid}-dwi-Ed.nhdr ]]; then
     dwifile="${casedir}/diff/${caseid}-dwi-Ed.nhdr"
     echo "set dwifile ${dwifile}"
 else
@@ -39,32 +39,24 @@ fi
 if [[ -e ${casedir}/diff/Tensor_mask-${caseid}-dwi-filt-Ed_AvGradient-edited.nhdr ]]; then
     maskfile="${casedir}/diff/Tensor_mask-${caseid}-dwi-filt-Ed_AvGradient-edited.nhdr"
     echo "set maskfile ${maskfile}"
-if [[ -e ${casedir}/diff/Tensor_mask-${caseid}-dwi-Ed_AvGradient-edited.nhd ]]; then
+elif [[ -e ${casedir}/diff/Tensor_mask-${caseid}-dwi-Ed_AvGradient-edited.nhd ]]; then
     maskfile="${casedir}/diff/Tensor_mask-${caseid}-dwi-Ed_AvGradient-edited.nhd"
     echo "set maskfile ${maskfile}"
 else
     echo "dwi file does not exist"; exit 1
 fi
 
-# set output directory
-outputdir=${caseprojdir}/$2
-if [[ -e ${outputdir} ]]; then
-    mkdir ${outputdir}
-    echo "make directory outputdir ${outputdir}"
-else 
-    echo "${outputdir} already exists and output directory is set to the directory"
-fi
-
 # create whole corpus callosum ROI if it does not exist
 # create binary image data where greater than intensity 0 
 # (any label has any intensity other than 0).
 # and save by \"unu save\"
-if [[ ! -e ${caseid}-cc-roi.nrrd ]]; then
-    unu 2op gt ${caseid}-cc-div-roi.nrrd 0 | unu save -e gzip -f nrrd -o ${caseid}-cc-roi.nrrd
+if [[ ! -e ${caseprojdir}/${caseid}-cc-roi.nrrd ]]; then
+    unu 2op gt ${caseprojdir}/${caseid}-cc-div-roi.nrrd 0 | unu save -e gzip -f nrrd -o ${caseprojdir}/${caseid}-cc-roi.nrrd
     echo "create ${caseid}-cc-roi.nrrd"
 fi
 
 # create output directory if it does not exist and move to the directory
+outputdir=${caseprojdir}/$2
 if [[ ! -e ${outputdir} ]]; then
     mkdir ${outputdir}
     cd ${outputdir}
@@ -148,7 +140,7 @@ functractography ${caseprojdir}/${caseid}-cc-div-roi.nrrd 244 ${outputdir}/${cas
 functractography ${caseprojdir}/${caseid}-cc-div-roi.nrrd 245 ${outputdir}/${caseid}-cc-div5-ukf.vtk
 
 # measure tracts
-cmd=measureTracts.py -i ${caseid}-cc-ukf.vtk ${caseid}-cc-div1-ukf.vtk ${caseid}-cc-div2-ukf.vtk ${caseid}-cc-div3-ukf.vtk ${caseid}-cc-div4-ukf.vtk ${caseid}-cc-div5-ukf.vtk -o ${caseid}-cc-ukf-values.csv
+cmd="measureTracts.py -i ${caseid}-cc-ukf.vtk ${caseid}-cc-div1-ukf.vtk ${caseid}-cc-div2-ukf.vtk ${caseid}-cc-div3-ukf.vtk ${caseid}-cc-div4-ukf.vtk ${caseid}-cc-div5-ukf.vtk -o ${caseid}-cc-ukf-values.csv"
 echo "${cmd}"
 eval "${cmd}"
 echo "done"
@@ -158,3 +150,4 @@ echo "done"
 # logfilename=${scriptname}.log
 # echo "${cmd}" | tee ${logfilename}
 # eval "${cmd}" 2>&1 | tee -a ${logfilename}
+
